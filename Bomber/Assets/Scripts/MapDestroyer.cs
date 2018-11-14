@@ -7,15 +7,61 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Tilemap))]
 class MapDestroyer : MonoBehaviour
 {
-   
-    private Tilemap _tilemap;
+    [SerializeField]
+    private Tilemap _map;
+    [SerializeField]
+    private Tile _destractable;
+    [SerializeField]
+    private GameObject _explosionPrefab;
+    
 
-    private void Start()
+    public void Explode(Vector2 worldPos, int count )
     {
-        _tilemap = GetComponent<Tilemap>();
+
+        Vector3Int originDestrCell = _map.WorldToCell(worldPos);
+        ExplodeCell(originDestrCell);
+        for (int i = 1; i < count + 1; i++)
+        {
+            if (!ExplodeCell(originDestrCell + new Vector3Int(i, 0, 0)))
+            {
+                break;
+            }
+        }
+        for (int i = 1; i < count + 1; i++)
+        {
+            if (!ExplodeCell(originDestrCell + new Vector3Int(-i, 0, 0)))
+            {
+                break;
+            }
+        }
+        for (int i = 1; i < count + 1; i++)
+        {
+            if (!ExplodeCell(originDestrCell + new Vector3Int(0, i, 0)))
+            {
+                break;
+            }
+        }
+        for (int i = 1; i < count + 1; i++)
+        {
+            if (!ExplodeCell(originDestrCell + new Vector3Int(0, -i, 0)))
+            {
+                break;
+            }
+        }
     }
-    public void Explode(Vector2 worldPos)
+    bool ExplodeCell(Vector3Int cell)
     {
-       Vector3Int originCell =  _tilemap.WorldToCell(worldPos);
+        Tile tile = _map.GetTile<Tile>(cell);
+        if (tile != _destractable && tile != null)
+        {
+            return false;
+        }
+         _map.SetTile(cell, null);
+
+        Vector3 explosionPos = _map.GetCellCenterWorld(cell);
+        var exp = Instantiate(_explosionPrefab, explosionPos, Quaternion.identity);
+        Destroy(exp, 5f);
+        return true;
+
     }
 }

@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Tilemap _tilemap;
     [SerializeField]
-    private GameObject _bombPrefab;
+    private Bomb _bombPrefab;
 	void Update () {
         if (Input.GetMouseButtonDown(0))
         {
@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
             Vector3 cellCenterPos = _tilemap.GetCellCenterWorld(cell);
 
             Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);
+             
         }
 	}
 }
