@@ -5,21 +5,28 @@ using UnityEngine.Tilemaps;
 
 namespace Bomber.Controllers
 {
-    [RequireComponent(typeof(Tilemap))]
+    /// <summary>
+    /// Содержит логику и параметры карты из тайлов.
+    /// </summary>
+    [RequireComponent(typeof(Grid))]   
     class MapDestroyer : MonoBehaviour
     {
         [SerializeField]
-        private Tilemap _map;
+        private Tilemap _wallsMap;
         [SerializeField]
         private Tile _destractable;
         [SerializeField]
         private GameObject _explosionPrefab;
 
-
+        public Tilemap GetWallsMap
+        {
+            get { return _wallsMap; }
+            
+        }
         public void Explode(Vector2 worldPos, int count)
         {
 
-            Vector3Int originDestrCell = _map.WorldToCell(worldPos);
+            Vector3Int originDestrCell = _wallsMap.WorldToCell(worldPos);
             ExplodeCell(originDestrCell);
             for (int i = 1; i < count + 1; i++)
             {
@@ -52,16 +59,26 @@ namespace Bomber.Controllers
         }
         bool ExplodeCell(Vector3Int cell)
         {
-            Tile tile = _map.GetTile<Tile>(cell);
+            Tile tile = _wallsMap.GetTile<Tile>(cell);
             if (tile != _destractable && tile != null)
             {
                 return false;
             }
-            _map.SetTile(cell, null);
+            if (tile == _destractable)
+            {
+                _wallsMap.SetTile(cell, null);
 
-            Vector3 explosionPos = _map.GetCellCenterWorld(cell);
+                Vector3 expPos = _wallsMap.GetCellCenterWorld(cell);
+                var expp = Instantiate(_explosionPrefab, expPos, Quaternion.identity);
+
+                Destroy(expp, 0.5f);
+                return false;
+            }
+            _wallsMap.SetTile(cell, null);
+
+            Vector3 explosionPos = _wallsMap.GetCellCenterWorld(cell);
             var exp = Instantiate(_explosionPrefab, explosionPos, Quaternion.identity);
-            
+
             Destroy(exp, 0.5f);
             return true;
 

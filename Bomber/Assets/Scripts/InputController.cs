@@ -1,39 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Bomber.Controllers
 {
+    /// <summary>
+    /// Содержит логику и параметры для обработку входящих команд пользователя
+    /// </summary>
     class InputController: MonoBehaviour
     {
-        public float GetHorizontal { get; private set; }
-        public float GetVertical { get; private set; }
+        /// <summary>
+        /// Значение входящей команды от пользователя по оси "Horizontal" без сглаживания 
+        /// </summary>
+        public float GetHorizontalRaw { get; private set; }
+        
+        /// <summary>
+        /// Значение входящей команды от пользователя по оси "Vertical" без сглаживания 
+        /// </summary>
+        public float GetVerticalRaw { get; private set; }
+        
+        /// <summary>
+        /// Событие нажатия на кнопку Space
+        /// </summary>
         public Action PlaceBomb;
+        /// <summary>
+        /// Событие изменения входящих команд
+        /// </summary>
         public Action<float,float> GetInput;
-
+        /// <summary>
+        /// Флаг для прекращения отпрвки 0 по осям "Horizontal" и "Vertical".
+        /// Используется для предотвращения отправки одинаковой инфорации
+        /// </summary>
         private bool _zeroSended = false;
+
+        
 
         private void Update()
         {
-            GetHorizontal = Input.GetAxisRaw("Horizontal");
-            GetVertical = Input.GetAxisRaw("Vertical");
+            GetHorizontalRaw = Input.GetAxisRaw("Horizontal");
+            GetVerticalRaw = Input.GetAxisRaw("Vertical");
             if (Input.GetButtonDown("Jump"))
             {
                 PlaceBomb?.Invoke();
             }
-            if (GetHorizontal == 0 && GetVertical == 0 && !_zeroSended)
+            if (GetHorizontalRaw == 0 && GetVerticalRaw == 0 && !_zeroSended)
             {
-                Debug.Log(0);
-                GetInput?.Invoke(GetHorizontal, GetVertical);
+                GetInput?.Invoke(GetHorizontalRaw, GetVerticalRaw);
                 _zeroSended = true;
             }
-            if (GetHorizontal!=0|| GetVertical!=0)
+            if (GetHorizontalRaw!=0|| GetVerticalRaw!=0)
             {
-                GetInput?.Invoke(GetHorizontal, GetVertical);
+                GetInput?.Invoke(GetHorizontalRaw, GetVerticalRaw);
                 _zeroSended = false;
             }
+            
         }
         
     }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Bomber.Controllers
 {
+    /// <summary>
+    /// Логика и параметры анимации игрока
+    /// </summary>
     [RequireComponent(typeof(Animator))]
     class PlayerAnimationController:MonoBehaviour
     {
