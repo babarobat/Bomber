@@ -2,48 +2,68 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-[RequireComponent (typeof(Rigidbody2D))]
-[RequireComponent(typeof(Collider2D))]
-public class PlayerController : MonoBehaviour
+using Bomber.Interfaces;
+namespace Bomber.Controllers
 {
-
-    [SerializeField]
-    private Tilemap _tilemap;
-    [SerializeField]
-    private Bomb _bombPrefab;
-    [SerializeField]
-    private Transform _bombSpawnPoint;
-    [SerializeField]
-    private float _speed;
-    
-    private Animator _animator;
-
-    private Rigidbody2D _rb;
-    private void Start()
+    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Collider2D))]
+    public class PlayerController : MonoBehaviour,IDamage
     {
-        _rb = GetComponent<Rigidbody2D>();
-       
-        _animator = GetComponent<Animator>();
-    }
-    void Update ()
-    {
-        var hor = Input.GetAxisRaw("Horizontal");
-        var vert = Input.GetAxisRaw("Vertical");
-        _animator.SetFloat("VelocityX", hor);
-        _animator.SetFloat("VelocityY", vert);
-        if (Input.GetButtonDown("Jump"))
+
+        [SerializeField]
+        private Tilemap _tilemap;
+        [SerializeField]
+        private Bomb _bombPrefab;
+        [SerializeField]
+        private Transform _bombSpawnPoint;
+        [SerializeField]
+        private float _speed;
+
+        
+        private int _health;
+        private Rigidbody2D _rb;
+        private InputController _inputController;
+        
+        public void ApplyDamage(int damage)
         {
-            
-            Vector3Int cell = _tilemap.WorldToCell(_bombSpawnPoint.position);
-            Vector3 cellCenterPos = _tilemap.GetCellCenterWorld(cell);
-            Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);
-        }
-        if (hor != 0 || vert !=0)
-        {
-            
-            _rb.MovePosition( new Vector3(transform.position.x + hor* _speed * Time.deltaTime, transform.position.y+vert * _speed * Time.deltaTime,0));
+            throw new System.NotImplementedException();
         }
         
-	}
+        private void Start()
+        {
+            
+            _rb = GetComponent<Rigidbody2D>();
+            _inputController = FindObjectOfType<InputController>();
+            
+            
+            _inputController.PlaceBomb += PlaceBomb;
+            _inputController.GetInput += Move;
+        }
+        
+        private void PlaceBomb()
+        {
+                Vector3Int cell = _tilemap.WorldToCell(_bombSpawnPoint.position);
+                Vector3 cellCenterPos = _tilemap.GetCellCenterWorld(cell);
+                Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);            
+        }
+        private void Move( float hor, float vert)
+        {
+            var tmpSpeed = _speed;
+            if (hor != 0 && vert != 0)
+            {
+                tmpSpeed = tmpSpeed * 0.75f;
+            }
+            _rb.MovePosition(new Vector3(transform.position.x + hor * tmpSpeed * Time.deltaTime,
+                                          transform.position.y + vert * tmpSpeed * Time.deltaTime, 0));
+
+        }
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.tag == "Explosion")
+            {
+               
+            }
+        }
+    }
 
 }
