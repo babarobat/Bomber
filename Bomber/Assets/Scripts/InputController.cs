@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Bomber.Controllers
 {
     /// <summary>
-    /// Содержит логику и параметры для обработку входящих команд пользователя
+    /// Содержит логику и параметры для обработки входящих команд пользователя
     /// </summary>
     class InputController: MonoBehaviour
     {
@@ -47,7 +47,7 @@ namespace Bomber.Controllers
                 GetInput?.Invoke(GetHorizontalRaw, GetVerticalRaw);
                 _zeroSended = true;
             }
-            if (GetHorizontalRaw!=0|| GetVerticalRaw!=0)
+            if (GetHorizontalRaw!=0 || GetVerticalRaw!=0)
             {
                 GetInput?.Invoke(GetHorizontalRaw, GetVerticalRaw);
                 _zeroSended = false;

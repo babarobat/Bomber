@@ -57,7 +57,7 @@ namespace Bomber.Controllers
         /// <summary>
         /// Ссылка на контроллер карты
         /// </summary>
-        private MapDestroyer _mapDestroyer;
+        private MapController _mapDestroyer;
 
         /// <summary>
         /// Текущая скорость. Не может быть меньше 0
@@ -86,7 +86,7 @@ namespace Bomber.Controllers
             
             _rb = GetComponent<Rigidbody2D>();
             _inputController = FindObjectOfType<InputController>();
-            _mapDestroyer = FindObjectOfType<MapDestroyer>();
+            _mapDestroyer = FindObjectOfType<MapController>();
 
             CurrentSpeed = _speed;
 

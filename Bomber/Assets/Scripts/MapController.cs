@@ -9,7 +9,7 @@ namespace Bomber.Controllers
     /// Содержит логику и параметры карты из тайлов.
     /// </summary>
     [RequireComponent(typeof(Grid))]   
-    class MapDestroyer : MonoBehaviour
+    class MapController : MonoBehaviour
     {
         [SerializeField]
         private Tilemap _wallsMap;
@@ -20,8 +20,25 @@ namespace Bomber.Controllers
 
         public Tilemap GetWallsMap
         {
-            get { return _wallsMap; }
+            get => _wallsMap;
             
+        }
+        public Vector3Int GetWorldToCellPos(Vector2 worldPos) => _wallsMap.WorldToCell(worldPos);
+        public bool CanExplodeCell(Vector2 worldPos)
+        {
+            Vector3Int originDestrCell = _wallsMap.WorldToCell(worldPos);
+            Tile tile = _wallsMap.GetTile<Tile>(originDestrCell);
+            if (tile != _destractable && tile != null)
+            {
+                return false;
+            }
+            else return true;
+        }
+        public void RemoveCell(Vector2 worldPos) 
+        {
+            Vector3Int originDestrCell = _wallsMap.WorldToCell(worldPos);
+            Tile tile = _wallsMap.GetTile<Tile>(originDestrCell);
+            _wallsMap.SetTile(originDestrCell, null);
         }
         public void Explode(Vector2 worldPos, int count)
         {
@@ -57,7 +74,7 @@ namespace Bomber.Controllers
                 }
             }
         }
-        bool ExplodeCell(Vector3Int cell)
+        bool CanExplodeCell(Vector3Int cell)
         {
             Tile tile = _wallsMap.GetTile<Tile>(cell);
             if (tile != _destractable && tile != null)
@@ -81,6 +98,11 @@ namespace Bomber.Controllers
 
             Destroy(exp, 0.5f);
             return true;
+
+        }
+        public List<Vector3> CanExplodePoints(Vector2 startWorldPoint, int count)
+        {
+            List<Vector3> tmp = new List<Vector3>();
 
         }
     }
