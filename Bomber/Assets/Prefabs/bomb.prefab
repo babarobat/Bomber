@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _countdown: 2
+  _explosionPrefab: {fileID: 1529327925998562, guid: ddf79b14a4b3ef046a7d4f8198429624,
+    type: 2}
 --- !u!212 &212731087965686630
 SpriteRenderer:
   m_ObjectHideFlags: 1

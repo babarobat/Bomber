@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Bomber.Controllers;
 
@@ -39,31 +40,21 @@ public class Bomb : MonoBehaviour
     private void Start()
     {
         _mapController = FindObjectOfType<MapController>();
-        StartCoroutine(Explode(_countdown, _explosionCount));
+        StartCoroutine(InstantiateExplosions(_explosionCount,_countdown ));
     }
 
-    /// <summary>
-    /// Вызывает в Тайл Мап Контроллере метод создания взрывов
-    /// спустя заданный промежуток времени
-    /// </summary>
-    /// <param name="explodeTime">задержка перед врывом</param>
-    /// <param name="explosionCount">колличество взрывов</param>
-    /// <returns></returns>
-    IEnumerator Explode(float explodeTime, int explosionCount)
+    
+
+    IEnumerator InstantiateExplosions(int explosionCount, float explodeTime)
     {
         yield return new WaitForSeconds(explodeTime);
-        _mapController.Explode(transform.position, explosionCount);
+        foreach (var item in _mapController.ExplodeCells(transform.position,ExplosionCount))
+        {
+            var exp = Instantiate(_explosionPrefab, item, Quaternion.identity);
+            Destroy(exp, 0.5f);
+        }
         Destroy(gameObject);
     }
     
-    private void InstantiateExplosions(int explosionCount)
-    {
-        Vector3Int pos = _mapController.GetWorldToCellPos(transform.position);
-        if (_mapController.CanExplodeCell(transform.position))
-        {
-
-        }
-        Instantiate(_explosionPrefab, pos, Quaternion.identity);
-        
-    }
+    
 }
